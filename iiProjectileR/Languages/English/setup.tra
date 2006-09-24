@@ -1,0 +1,30 @@
+@10 = ~Normal arrow -> Normal arrow~
+@11 = ~All arrows -> Normal arrow~
+@12 = ~All arrows -> All arrows~
+
+@15 = ~Arrows~
+@16 = ~Arrowtype~
+
+
+
+@20 = ~Normal bolt -> Normal bolt~
+@21 = ~All bolts -> Normal bolt~
+@22 = ~All bolts -> All bolt~
+
+@25 = ~Bolts~
+@26 = ~Bolttype~
+
+
+
+@30 = ~Normal bullet -> Normal bullet~
+@31 = ~All bullets -> Normal bullet~
+@32 = ~All bullets -> All bullets~
+
+@35 = ~Bullet~
+@36 = ~Bullettype~
+
+
+
+@100 = ~View Readme~
+@101 = ~Show readme after installation~
+@102 = ~Do not show readme after installation~
