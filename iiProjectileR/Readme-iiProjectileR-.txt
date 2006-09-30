@@ -1,4 +1,4 @@
-Projectile Retrieval Mod V1
+Projectile Retrieval Mod V2
 ---------------------------
 
 +) Contents
@@ -17,6 +17,7 @@ Projectile Retrieval Mod V1
 
 Projectile Retrieval Mod makes use of WeiDU components and groups, to allow the player to customise their experience.
 Players can install the retrieval option for any combination of Arrows, Bolts and Bullets.
+Players can choose the percentage chance of a projectile being retrievable - (values are clamped at 0 and 100).
 Players can then further choose which category of the item will be retrievable, with the following options:
 
 Normal items
@@ -50,6 +51,9 @@ There are no known issues at this time.
 
 +) Section 5. Version History
 =============================
+V2 [30/09/2006]
+  - Added ability to specify chance of projectiles being retrievable
+
 V1 [24/09/2006]
   - Initial Release
 

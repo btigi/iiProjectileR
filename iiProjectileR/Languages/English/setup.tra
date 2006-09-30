@@ -28,3 +28,6 @@
 @100 = ~View Readme~
 @101 = ~Show readme after installation~
 @102 = ~Do not show readme after installation~
+
+@150 = ~Enter percentage chance of projectile being retrievable~
+@151 = ~(values clamped at 0 and 100)~
