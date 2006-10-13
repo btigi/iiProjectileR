@@ -1,0 +1,33 @@
+@10 = ~Flecha normal -> Flecha normal~
+@11 = ~Todas las flechas -> Flecha normal~
+@12 = ~Todas las flechas -> Todas las flechas~
+
+@15 = ~Flechas~
+@16 = ~Tipo de Flechas~
+
+
+
+@20 = ~Virote normal -> Virote normal~
+@21 = ~Todos los virotes -> Virote normal~
+@22 = ~Todos los virotes -> All bolt~
+
+@25 = ~Virotes~
+@26 = ~Tipo de Virotes~
+
+
+
+@30 = ~Bala normal -> Bala normal~
+@31 = ~Todas las balas -> Bala normal~
+@32 = ~Todas las balas -> Todas las balas~
+
+@35 = ~Balas~
+@36 = ~Tipo de Balas~
+
+
+
+@100 = ~Leer Leeme~
+@101 = ~Mostrar leeme luego de la instalación~
+@102 = ~No mostrar leeme luego de la instalación~
+
+@150 = ~Poner el porcentaje de probabilidad de que el proyectil sea recuperado~
+@151 = ~(valores sujetos en 0 y 100)~

@@ -7,7 +7,9 @@
 BACKUP ~iiProjectileR/backup~
 AUTHOR ~igi~
 
+
 LANGUAGE ~English~ ~English~ ~iiProjectileR/Languages/English/setup.tra~
+LANGUAGE ~Spanish (Translation by Immortality)~  ~Spanish~ ~iiProjectileR/Languages/Spanish/setup.tra~
 
 // ------------------------------------------------------------------------------------------------------------------------
 // Readme stuff
