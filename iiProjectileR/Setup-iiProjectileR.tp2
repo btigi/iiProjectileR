@@ -1,12 +1,11 @@
 // ----------------------------------------------------------------------------
-// Name:    Arrow Retrieval Mod
-// Author:  igi
-// Date:    30/09/2006
-// Version: 2
+// Name:    Projectile Retrieval Mod
+// Author:  igi + Andy B.
+// Date:    20/11/2006
+// Version: 5
 // ----------------------------------------------------------------------------
 BACKUP ~iiProjectileR/backup~
-AUTHOR ~igi~
-
+AUTHOR ~igi / Andy B.~
 
 LANGUAGE ~English~ ~English~ ~iiProjectileR/Languages/English/setup.tra~
 LANGUAGE ~Spanish (Translation by Immortality)~  ~Spanish~ ~iiProjectileR/Languages/Spanish/setup.tra~
@@ -29,602 +28,1620 @@ SUBCOMPONENT @100
 // Do nothing
 
 
-//!----------------------------------------------------------------------------
-// Arrows
-//!----------------------------------------------------------------------------
-BEGIN @10
-GROUP @15
-SUBCOMPONENT @16
+// ------------------------------------------------------------------------------------------------------------------------
+BEGIN @5
 
-  PRINT @150
-  PRINT @151
+PRINT @8
+ACTION_READLN how
+OUTER_WHILE !(IS_AN_INT %how%) || (%how% > 2) || (%how% < 1) BEGIN
+ PRINT @8
+ ACTION_READLN how
+END
+
+ACTION_IF (%how% = 1) THEN BEGIN
+ PRINT @10
+ ACTION_READLN choice
+ OUTER_WHILE !(IS_AN_INT %choice%) || (%choice% > 4) || (%choice% < 1) BEGIN
+  PRINT @10
+  ACTION_READLN choice
+ END
+
+ PRINT @160
+ ACTION_READLN EffectChance
+ OUTER_WHILE !(IS_AN_INT %EffectChance%) || (%EffectChance% < 0) || (%EffectChance% > 100) BEGIN
+  PRINT @160
   ACTION_READLN EffectChance
+ END
 
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
-  END
 
-COPY_EXISTING ~AROW01.itm~ ~override/AROW01.itm~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
+ // Standard projectile type -> standard projectile type
+ ACTION_IF (%choice% = 1) THEN BEGIN
+  COPY_EXISTING ~arow01.itm~ ~override~
+   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+    READ_SHORT 0x1c "item_type"
+    READ_SHORT 0x38 ~stack~
+    PATCH_IF (%stack% > 1) BEGIN
+     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+      READ_LONG   0x64 "abil_off"
+      READ_SHORT  0x68 "abil_num"
+      READ_LONG   0x6a "fx_off"
+      READ_SHORT  0x70 "fx_num"
+      SET "delta" = 0
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+       READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+       READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+       SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+       WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+       PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+        READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+        WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+        INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+        WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+        WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+        SET "delta" = ("%delta%" + 1)
+       END
       END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 5) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "AROW01" #8    // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
+     END
     END
-    IF ~ITM~
+   END
   BUT_ONLY_IF_IT_CHANGES
 
-
-
-BEGIN @11
-GROUP @15
-SUBCOMPONENT @16
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
-  END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
+  COPY_EXISTING ~bolt01.itm~ ~override~
+   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+    READ_SHORT 0x1c "item_type"
+    READ_SHORT 0x38 ~stack~
+    PATCH_IF (%stack% > 1) BEGIN
+     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+      READ_LONG   0x64 "abil_off"
+      READ_SHORT  0x68 "abil_num"
+      READ_LONG   0x6a "fx_off"
+      READ_SHORT  0x70 "fx_num"
+      SET "delta" = 0
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+       READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+       READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+       SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+       WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+       PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+        READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+        WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+        INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+        WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+        WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+        SET "delta" = ("%delta%" + 1)
+       END
       END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 5) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "AROW01" #8    // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
+     END
     END
-    IF ~ITM~
+   END
   BUT_ONLY_IF_IT_CHANGES
 
-
-
-BEGIN @12
-GROUP @15
-SUBCOMPONENT @16
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
-  END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
+  COPY_EXISTING ~bull01.itm~ ~override~
+   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+    READ_SHORT 0x1c "item_type"
+    READ_SHORT 0x38 ~stack~
+    PATCH_IF (%stack% > 1) BEGIN
+     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+      READ_LONG   0x64 "abil_off"
+      READ_SHORT  0x68 "abil_num"
+      READ_LONG   0x6a "fx_off"
+      READ_SHORT  0x70 "fx_num"
+      SET "delta" = 0
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+       READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+       READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+       SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+       WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+       PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+        READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+        WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+        INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+        WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+        WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+        SET "delta" = ("%delta%" + 1)
+       END
       END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 5) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
+     END
     END
-    IF ~ITM~
+   END
   BUT_ONLY_IF_IT_CHANGES
 
-
-
-
-
-//!----------------------------------------------------------------------------
-// Bolts
-//!----------------------------------------------------------------------------
-BEGIN @20
-GROUP @25
-SUBCOMPONENT @26
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
-  END
-
-COPY_EXISTING ~BOLT01.itm~ ~override/BOLT01.itm~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
+  COPY_EXISTING ~dart01.itm~ ~override~
+   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+    READ_SHORT 0x1c "item_type"
+    READ_SHORT 0x38 ~stack~
+    PATCH_IF (%stack% > 1) BEGIN
+     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+      READ_LONG   0x64 "abil_off"
+      READ_SHORT  0x68 "abil_num"
+      READ_LONG   0x6a "fx_off"
+      READ_SHORT  0x70 "fx_num"
+      SET "delta" = 0
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+       READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+       READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+       SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+       WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+       PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+        READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+        WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+        INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+        WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+        WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+        SET "delta" = ("%delta%" + 1)
+       END
       END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 31) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BOLT01" #8    // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
+     END
     END
-    IF ~ITM~
+   END
   BUT_ONLY_IF_IT_CHANGES
 
-
-
-BEGIN @21
-GROUP @25
-SUBCOMPONENT @26
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
-  END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
+  COPY_EXISTING ~dagg05.itm~ ~override~
+   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+    READ_SHORT 0x1c "item_type"
+    READ_SHORT 0x38 ~stack~
+    PATCH_IF (%stack% > 1) BEGIN
+     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+      READ_LONG   0x64 "abil_off"
+      READ_SHORT  0x68 "abil_num"
+      READ_LONG   0x6a "fx_off"
+      READ_SHORT  0x70 "fx_num"
+      SET "delta" = 0
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+       READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+       READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+       SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+       WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+       PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+        READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+        WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+        INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+        WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+        WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+        SET "delta" = ("%delta%" + 1)
+       END
       END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 31) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BOLT01" #8    // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
+     END
     END
-    IF ~ITM~
+   END
   BUT_ONLY_IF_IT_CHANGES
 
-
-
-BEGIN @22
-GROUP @25
-SUBCOMPONENT @26
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
-  END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
+  COPY_EXISTING ~ax1h04.itm~ ~override~
+   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+    READ_SHORT 0x1c "item_type"
+    READ_SHORT 0x38 ~stack~
+    PATCH_IF (%stack% > 1) BEGIN
+     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+      READ_LONG   0x64 "abil_off"
+      READ_SHORT  0x68 "abil_num"
+      READ_LONG   0x6a "fx_off"
+      READ_SHORT  0x70 "fx_num"
+      SET "delta" = 0
+      FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+       READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+       READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+       SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+       WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+       PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+        READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+        WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+        INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+        WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+        WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+        WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+        SET "delta" = ("%delta%" + 1)
+       END
       END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 31) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
+     END
     END
-    IF ~ITM~
+   END
   BUT_ONLY_IF_IT_CHANGES
+ END
 
-
-
-
-
-//!----------------------------------------------------------------------------
-// Bullets
-//!----------------------------------------------------------------------------
-BEGIN @30
-GROUP @35
-SUBCOMPONENT @36
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
-  END
-
-COPY_EXISTING ~BULL01.itm~ ~override/BULL01.itm~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
+ // All projectile types -> standard projectile type
+ ACTION_IF (%choice% = 2) THEN BEGIN
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       PATCH_IF (%item_type% = 5) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%item_type% = 31) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%item_type% = 14) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%item_type% = 0x18) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%item_type% = 0x10) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%item_type% = 0x19) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+       END
+       SET "delta" = ("%delta%" + 1)
       END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 14) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BULL01" #8    // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
+     END
     END
-    IF ~ITM~
-  BUT_ONLY_IF_IT_CHANGES
-
-
-
-BEGIN @31
-GROUP @35
-SUBCOMPONENT @36
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
+   END
   END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
-      END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 14) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BULL01" #8    // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
-    END
-    IF ~ITM~
   BUT_ONLY_IF_IT_CHANGES
+ END
 
-
-
-BEGIN @32
-GROUP @35
-SUBCOMPONENT @36
-
-  PRINT @150
-  PRINT @151
-  ACTION_READLN EffectChance
-
-  OUTER_WHILE !(IS_AN_INT %EffectChance%)
-  BEGIN
-    PRINT @150
-    PRINT @151
-    ACTION_READLN EffectChance
+ // All projectile type -> All projectile type
+ ACTION_IF (%choice% = 3) THEN BEGIN
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
   END
-
-COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
-    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
-
-      PATCH_IF (%EffectChance% < 0)
-      BEGIN
-        SET %EffectChance% = 0
-      END
-
-      PATCH_IF (%EffectChance% > 110)
-      BEGIN
-        SET %EffectChance% = 100
-      END
-
-      READ_SHORT 0x1c "item_type"
-
-      PATCH_IF (%item_type% = 14) BEGIN
-        READ_LONG   0x64 "abil_off"
-        READ_SHORT  0x68 "abil_num"
-        READ_LONG   0x6a "fx_off"
-        READ_SHORT  0x70 "fx_num"
-
-        SET "delta" = 0
-        FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
-          READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
-          READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
-          SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
-          WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
-
-          PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
-            READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
-            WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
-            INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
-
-              WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
-              WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: preset target
-              WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
-              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
-              WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-              WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
-            SET "delta" = ("%delta%" + 1)
-          END
-        END
-
-      END
-    END
-    IF ~ITM~
   BUT_ONLY_IF_IT_CHANGES
+ END
 
+ // Decrementing enchantment
+ ACTION_IF (%choice% = 4) THEN BEGIN
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x19) || (%item_type% = 0x10) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       PATCH_IF (%item_type% = 5) BEGIN
+        PATCH_IF (%thac0% > 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow11~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow02~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+        END
+       END
+       ELSE
+       PATCH_IF (%item_type% = 31) BEGIN
+        PATCH_IF (%thac0% > 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt06~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt02~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+        END
+       END
+       ELSE
+       PATCH_IF (%item_type% = 14) BEGIN
+        PATCH_IF (FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
+         PATCH_IF (%thac0% > 3) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (%thac0% = 3) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+         END
+        END
+        ELSE
+        PATCH_IF !(FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
+         PATCH_IF (%thac0% > 2) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+         END
+        END
+        ELSE
+        PATCH_IF (%thac0% = 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+        END
+       END
+       ELSE
+       PATCH_IF (%item_type% = 0x18) BEGIN
+        PATCH_IF (%thac0% > 2) || (%thac0% = 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart02~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+        END
+       END
+       ELSE
+       PATCH_IF (%item_type% = 0x10) BEGIN
+        PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+        END
+       END
+       ELSE
+       PATCH_IF (%item_type% = 0x19) BEGIN
+        PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+        END
+       END
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+END
+
+
+
+//!---------------
+// CHOICES BY TYPE
+//!---------------
+ACTION_IF (%how% = 2) THEN BEGIN
+ PRINT @15
+ ACTION_READLN choice_arrow
+ OUTER_WHILE !(IS_AN_INT %choice_arrow%) || (%choice_arrow% < 0) || (%choice_arrow% > 4) BEGIN
+  PRINT @15                                              
+  ACTION_READLN choice_arrow
+ END
+
+ // Standard projectile type -> standard projectile type
+ ACTION_IF (%choice_arrow% = 1) THEN BEGIN
+  PRINT @161
+  ACTION_READLN EffectChance_arrow
+  OUTER_WHILE !(IS_AN_INT %EffectChance_arrow%) || (%EffectChance_arrow% < 0) || (%EffectChance_arrow% > 100) BEGIN
+   PRINT @161
+   ACTION_READLN EffectChance_arrow
+  END
+  COPY_EXISTING ~arow01.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_arrow%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 5) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "arow01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile types -> standard projectile type
+ ACTION_IF (%choice_arrow% = 2) THEN BEGIN
+  PRINT @161
+  ACTION_READLN EffectChance_arrow
+  OUTER_WHILE !(IS_AN_INT %EffectChance_arrow%) || (%EffectChance_arrow% < 0) || (%EffectChance_arrow% > 100) BEGIN
+   PRINT @161
+   ACTION_READLN EffectChance_arrow
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_arrow%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 5) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "arow01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile type -> All projectile type
+ ACTION_IF (%choice_arrow% = 3) THEN BEGIN
+  PRINT @161
+  ACTION_READLN EffectChance_arrow
+  OUTER_WHILE !(IS_AN_INT %EffectChance_arrow%) || (%EffectChance_arrow% < 0) || (%EffectChance_arrow% > 100) BEGIN
+   PRINT @161
+   ACTION_READLN EffectChance_arrow
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_arrow%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 5) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // Decrementing enchantment
+ ACTION_IF (%choice_arrow% = 4) THEN BEGIN
+  PRINT @161
+  ACTION_READLN EffectChance_arrow
+  OUTER_WHILE !(IS_AN_INT %EffectChance_arrow%) || (%EffectChance_arrow% < 0) || (%EffectChance_arrow% > 100) BEGIN
+   PRINT @161
+   ACTION_READLN EffectChance_arrow
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_arrow%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 5) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
+       PATCH_IF (%thac0% > 2) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow11~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%thac0% = 2) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow02~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+       END
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+
+ //!----------------------------------------------------------------------------
+ // Bolts
+ //!----------------------------------------------------------------------------
+ PRINT @20
+ ACTION_READLN choice_bolt
+ OUTER_WHILE !(IS_AN_INT %choice_bolt%) || (%choice_bolt% < 0) || (%choice_bolt% > 4) BEGIN
+  PRINT @20                                              
+  ACTION_READLN choice_bolt
+ END
+ ACTION_IF (%choice_bolt% = 1) THEN BEGIN
+  PRINT @162
+  ACTION_READLN EffectChance_bolt
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bolt%) || (%EffectChance_bolt% < 0) || (%EffectChance_bolt% > 100) BEGIN
+   PRINT @162
+   ACTION_READLN EffectChance_bolt
+  END
+  COPY_EXISTING ~BOLT01.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bolt%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 31) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BOLT01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile types -> standard projectile type
+ ACTION_IF (%choice_bolt% = 2) THEN BEGIN
+  PRINT @162
+  ACTION_READLN EffectChance_bolt
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bolt%) || (%EffectChance_bolt% < 0) || (%EffectChance_bolt% > 100) BEGIN
+   PRINT @162
+   ACTION_READLN EffectChance_bolt
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bolt%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 31) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BOLT01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile type -> All projectile type
+ ACTION_IF (%choice_bolt% = 3) THEN BEGIN
+  PRINT @162
+  ACTION_READLN EffectChance_bolt
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bolt%) || (%EffectChance_bolt% < 0) || (%EffectChance_bolt% > 100) BEGIN
+   PRINT @162
+   ACTION_READLN EffectChance_bolt
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bolt%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 31) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // Decrementing enchantment
+ ACTION_IF (%choice_bolt% = 4) THEN BEGIN
+  PRINT @162
+  ACTION_READLN EffectChance_bolt
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bolt%) || (%EffectChance_bolt% < 0) || (%EffectChance_bolt% > 100) BEGIN
+   PRINT @162
+   ACTION_READLN EffectChance_bolt
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bolt%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 31) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
+       PATCH_IF (%thac0% > 2) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt06~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%thac0% = 2) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt02~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+       END
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+
+ //!----------------------------------------------------------------------------
+ // Bullets
+ //!----------------------------------------------------------------------------
+ PRINT @30
+ ACTION_READLN choice_bullet
+ OUTER_WHILE !(IS_AN_INT %choice_bullet%) || (%choice_bullet% < 0) || (%choice_bullet% > 4) BEGIN
+  PRINT @30                                              
+  ACTION_READLN choice_bullet
+ END
+ ACTION_IF (%choice_bullet% = 1) THEN BEGIN
+  PRINT @163
+  ACTION_READLN EffectChance_bullet
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bullet%) || (%EffectChance_bullet% < 0) || (%EffectChance_bullet% > 100) BEGIN
+   PRINT @163
+   ACTION_READLN EffectChance_bullet
+  END
+  COPY_EXISTING ~BULL01.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bullet%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 14) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BULL01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile types -> standard projectile type
+ ACTION_IF (%choice_bullet% = 2) THEN BEGIN
+  PRINT @163
+  ACTION_READLN EffectChance_bullet
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bullet%) || (%EffectChance_bullet% < 0) || (%EffectChance_bullet% > 100) BEGIN
+   PRINT @163
+   ACTION_READLN EffectChance_bullet
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bullet%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 14) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BULL01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile type -> All projectile type
+ ACTION_IF (%choice_bullet% = 3) THEN BEGIN
+  PRINT @163
+  ACTION_READLN EffectChance_bullet
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bullet%) || (%EffectChance_bullet% < 0) || (%EffectChance_bullet% > 100) BEGIN
+   PRINT @163
+   ACTION_READLN EffectChance_bullet
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bullet%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 14) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // Decrementing enchantment
+ ACTION_IF (%choice_bullet% = 4) THEN BEGIN
+  PRINT @163
+  ACTION_READLN EffectChance_bullet
+  OUTER_WHILE !(IS_AN_INT %EffectChance_bullet%) || (%EffectChance_bullet% < 0) || (%EffectChance_bullet% > 100) BEGIN
+   PRINT @163
+   ACTION_READLN EffectChance_bullet
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_bullet%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 14) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
+       PATCH_IF (FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
+        PATCH_IF (%thac0% > 3) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 3) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+        END
+       END
+       ELSE
+       PATCH_IF !(FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
+        PATCH_IF (%thac0% > 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+        END
+       END
+       ELSE
+       PATCH_IF (%thac0% = 2) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+       END
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+
+ //!----------------------------------------------------------------------------
+ // Darts
+ //!----------------------------------------------------------------------------
+ PRINT @40
+ ACTION_READLN choice_dart
+ OUTER_WHILE !(IS_AN_INT %choice_dart%) || (%choice_dart% < 0) || (%choice_dart% > 4) BEGIN
+  PRINT @40                                              
+  ACTION_READLN choice_dart
+ END
+ ACTION_IF (%choice_dart% = 1) THEN BEGIN
+  PRINT @164
+  ACTION_READLN EffectChance_dart
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dart%) || (%EffectChance_dart% < 0) || (%EffectChance_dart% > 100) BEGIN
+   PRINT @164
+   ACTION_READLN EffectChance_dart
+  END
+  COPY_EXISTING ~DART01.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dart%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x18) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "DART01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile types -> standard projectile type
+ ACTION_IF (%choice_dart% = 2) THEN BEGIN
+  PRINT @164
+  ACTION_READLN EffectChance_dart
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dart%) || (%EffectChance_dart% < 0) || (%EffectChance_dart% > 100) BEGIN
+   PRINT @164
+   ACTION_READLN EffectChance_dart
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dart%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x18) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "DART01" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile type -> All projectile type
+ ACTION_IF (%choice_dart% = 3) THEN BEGIN
+  PRINT @164
+  ACTION_READLN EffectChance_dart
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dart%) || (%EffectChance_dart% < 0) || (%EffectChance_dart% > 100) BEGIN
+   PRINT @164
+   ACTION_READLN EffectChance_dart
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dart%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x18) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // Decrementing enchantment
+ ACTION_IF (%choice_dart% = 4) THEN BEGIN
+  PRINT @164
+  ACTION_READLN EffectChance_dart
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dart%) || (%EffectChance_dart% < 0) || (%EffectChance_dart% > 100) BEGIN
+   PRINT @164
+   ACTION_READLN EffectChance_dart
+  END
+  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dart%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x18) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
+       PATCH_IF (%thac0% > 2) || (%thac0% = 2) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart02~ #8    // resource
+       END
+       ELSE
+       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+       END
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+
+ //!----------------------------------------------------------------------------
+ // Throwing Dagger
+ //!----------------------------------------------------------------------------
+ PRINT @50
+ ACTION_READLN choice_dagger
+ OUTER_WHILE !(IS_AN_INT %choice_dagger%) || (%choice_dagger% < 0) || (%choice_dagger% > 4) BEGIN
+  PRINT @50                                              
+  ACTION_READLN choice_dagger
+ END
+ ACTION_IF (%choice_dagger% = 1) THEN BEGIN
+  PRINT @165
+  ACTION_READLN EffectChance_dagger
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dagger%) || (%EffectChance_dagger% < 0) || (%EffectChance_dagger% > 100) BEGIN
+   PRINT @165
+   ACTION_READLN EffectChance_dagger
+  END
+  COPY_EXISTING ~DAGG05.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dagger%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x10) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "DAGG05" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile types -> standard projectile type
+ ACTION_IF (%choice_dagger% = 2) THEN BEGIN
+  PRINT @165
+  ACTION_READLN EffectChance_dagger
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dagger%) || (%EffectChance_dagger% < 0) || (%EffectChance_dagger% > 100) BEGIN
+   PRINT @165
+   ACTION_READLN EffectChance_dagger
+  END
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dagger%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x10) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile type -> All projectile type
+ ACTION_IF (%choice_dagger% = 3) THEN BEGIN
+  PRINT @165
+  ACTION_READLN EffectChance_dagger
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dagger%) || (%EffectChance_dagger% < 0) || (%EffectChance_dagger% > 100) BEGIN
+   PRINT @165
+   ACTION_READLN EffectChance_dagger
+  END
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dagger%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x10) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // Decrementing enchantment
+ ACTION_IF (%choice_dagger% = 4) THEN BEGIN
+  PRINT @165
+  ACTION_READLN EffectChance_dagger
+  OUTER_WHILE !(IS_AN_INT %EffectChance_dagger%) || (%EffectChance_dagger% < 0) || (%EffectChance_dagger% > 100) BEGIN
+   PRINT @165
+   ACTION_READLN EffectChance_dagger
+  END
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_dagger%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x10) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+       END
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+
+ //!----------------------------------------------------------------------------
+ // Throwing Axe
+ //!----------------------------------------------------------------------------
+ PRINT @60
+ ACTION_READLN choice_axe
+ OUTER_WHILE !(IS_AN_INT %choice_axe%) || (%choice_axe% < 0) || (%choice_axe% > 4) BEGIN
+  PRINT @60                                              
+  ACTION_READLN choice_axe
+ END
+ ACTION_IF (%choice_axe% = 1) THEN BEGIN
+  PRINT @166
+  ACTION_READLN EffectChance_axe
+  OUTER_WHILE !(IS_AN_INT %EffectChance_axe%) || (%EffectChance_axe% < 0) || (%EffectChance_axe% > 100) BEGIN
+   PRINT @166
+   ACTION_READLN EffectChance_axe
+  END
+  COPY_EXISTING ~ax1h04.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_axe%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x19) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "ax1h04" #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile types -> standard projectile type
+ ACTION_IF (%choice_axe% = 2) THEN BEGIN
+  PRINT @166
+  ACTION_READLN EffectChance_axe
+  OUTER_WHILE !(IS_AN_INT %EffectChance_axe%) || (%EffectChance_axe% < 0) || (%EffectChance_axe% > 100) BEGIN
+   PRINT @166
+   ACTION_READLN EffectChance_axe
+  END
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_axe%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x19) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // All projectile type -> All projectile type
+ ACTION_IF (%choice_axe% = 3) THEN BEGIN
+  PRINT @166
+  ACTION_READLN EffectChance_axe
+  OUTER_WHILE !(IS_AN_INT %EffectChance_axe%) || (%EffectChance_axe% < 0) || (%EffectChance_axe% > 100) BEGIN
+   PRINT @166
+   ACTION_READLN EffectChance_axe
+  END
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_axe%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x19) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+
+ // Decrementing enchantment
+ ACTION_IF (%choice_axe% = 4) THEN BEGIN
+  PRINT @166
+  ACTION_READLN EffectChance_axe
+  OUTER_WHILE !(IS_AN_INT %EffectChance_axe%) || (%EffectChance_axe% < 0) || (%EffectChance_axe% > 100) BEGIN
+   PRINT @166
+   ACTION_READLN EffectChance_axe
+  END
+  COPY_EXISTING_REGEXP ~.*\.itm~ ~override~
+  PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
+   SET ~EffectChance~ = %EffectChance_axe%
+   READ_SHORT 0x1c "item_type"
+   READ_SHORT 0x38 ~stack~
+   PATCH_IF (%stack% > 1) BEGIN
+    PATCH_IF (%item_type% = 0x19) BEGIN
+     READ_LONG   0x64 "abil_off"
+     READ_SHORT  0x68 "abil_num"
+     READ_LONG   0x6a "fx_off"
+     READ_SHORT  0x70 "fx_num"
+     SET "delta" = 0
+     FOR (index = 0; index < abil_num; index = index + 1) BEGIN // looks for correct ability header
+      READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
+      READ_BYTE   ("%abil_off%" +        ("%index%" * 0x38)) "type"
+      READ_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "abil_fx_idx"
+      SET "abil_fx_idx" = ("%abil_fx_idx%" + "%delta%")
+      WRITE_SHORT  ("%abil_off%" + 0x20 + ("%index%" * 0x38)) "%abil_fx_idx%"
+      PATCH_IF ("%type%" = 2) THEN BEGIN // projectile ability check
+       READ_SHORT  ("%abil_off%" + 0x1e + ("%index%" * 0x38)) "abil_fx_num"
+       WRITE_SHORT ("%abil_off%" + 0x1e + ("%index%" * 0x38)) ("%abil_fx_num%" +  1)
+       INSERT_BYTES  ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 0x30 // new effect
+       WRITE_SHORT ("%fx_off%" +        ("%abil_fx_idx%" * 0x30)) 122            // create inventory item
+       WRITE_BYTE  ("%fx_off%" + 0x02 + ("%abil_fx_idx%" * 0x30)) 2              // target: pre-target
+       WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
+       WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
+       WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
+       PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
+        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+       END
+       SET "delta" = ("%delta%" + 1)
+      END
+     END
+    END
+   END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+ END
+END
 
 // ----------------------------------------------------------------------------
 // EOF

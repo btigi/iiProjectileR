@@ -1,33 +1,133 @@
-@10 = ~Flecha normal -> Flecha normal~
-@11 = ~Todas las flechas -> Flecha normal~
-@12 = ~Todas las flechas -> Todas las flechas~
+@5 = ~Mod de Proyectiles Recuperables~
+@8 = ~Por favor, dime como quieres que modifique los archivos.
 
-@15 = ~Flechas~
-@16 = ~Tipo de Flechas~
+1. Quiero modificar TODOS los proyectiles al mismo tiempo.
+2. Quiero modificar los proyectiles uno por uno.
+
+POR FAVOR ELIGE  1 O 2  ~
+
+@10 = ~Por favor elige como quieres que se recuperen TODOS tus proyectiles.
+
+1. Sólo proyectiles normales -> Sólo proyectiles normales
+2. Todos los proyectiles       -> Sólo proyectiles normales
+3. Cada proyectil       -> Cada proyectil
+4. Proyectiles Mágicos   -> Magia reducida/Proyectiles normales
+
+POR FAVOR ELIGE  1, 2, 3, O 4  ~
+
+@15 = ~Flechas
+Elige cómo quieres que se creen las flechas recuperables al impactar
+***
+0. No instalar las flechas
+1. Sólo flecha normal -> Sólo flecha normal
+2. Todas las flechas       -> Sólo flecha normal
+3. Cada flecha       -> Cada flecha
+4. Flechas Mágicas   -> Magia reducida/Flechas normales
+
+POR FAVOR ELIGE  0, 1, 2, 3, O 4  ~
+
+@20 = ~Virotes
+Elige cómo quieres que se creen los virotes recuperables al impactar
+***
+0. No instalar los virotes
+1. Sólo virote normal -> Sólo virote normal
+2. Todos los virotes       -> Sólo virote normal
+3. Cada virote       -> Cada virote
+4. Virotes Mágicos  -> Magia reducida/Virotes normales
+
+POR FAVOR ELIGE  0, 1, 2, 3, O 4  ~
+
+@30 = ~Bala
+Elige cómo quieres que se creen las balas recuperables al impactar
+***
+0. No instalar las balas
+1. Sólo bala normal -> Sólo bala normal
+2. Todas las balas       -> Sólo bala normal
+3. Cada bala       -> Cada bala
+4. Balas Mágicas  -> Magia reducida/Balas normales
+
+POR FAVOR ELIGE  0, 1, 2, 3, O 4  ~
+
+@40 = ~Dardo
+Elige cómo quieres que se creen los dardos recuperables al impactar
+***
+0. No instalar los dardos
+1. Sólo dardo normal -> Sólo dardo normal
+2. Todos los dardos       -> Sólo dardo normal
+3. Cada dardo       -> Cada dardo
+4. Dardos Mágicos  -> Magia reducida/Dardos normales
+
+POR FAVOR ELIGE  0, 1, 2, 3, O 4  ~
+
+@50 = ~Daga arrojadiza
+Elige cómo quieres que se creen las dagas arrojadizas recuperables al impactar
+***
+0. No instalar las dagas arrojadizas
+1. Sólo daga arrojadiza normal -> Sólo daga arrojadiza normal
+2. Todas las dagas arrojadizas       -> Sólo daga arrojadiza normal
+3. Cada daga arrojadiza       -> Cada daga arrojadiza
+4. Dagas arrojadizas Mágicas  -> Magia reducida/Sagas arrojadizas normales
+
+POR FAVOR ELIGE  0, 1, 2, 3, O 4  ~
+
+@60 = ~Hacha arrojadiza
+Elige cómo quieres que se creen las hachas arrojadizas recuperables al impactar
+***
+0. No instalar las hachas arrojadizas
+1. Sólo hacha arrojadiza normal -> Sólo hacha arrojadiza normal
+2. Todas las hachas arrojadizas       -> Sólo hacha arrojadiza normal
+3. Cada hacha arrojadiza       -> Cada hacha arrojadiza
+4. Hachas arrojadizas Mágicas  -> Magia reducida/Hachas arrojadizas normales
+
+POR FAVOR ELIGE  0, 1, 2, 3, O 4  ~
 
 
 
-@20 = ~Virote normal -> Virote normal~
-@21 = ~Todos los virotes -> Virote normal~
-@22 = ~Todos los virotes -> All bolt~
-
-@25 = ~Virotes~
-@26 = ~Tipo de Virotes~
+@100 = ~Ver Léeme~
+@101 = ~Mostrar Léeme luego de la instalación~
+@102 = ~No mostrar léeme luego de la instalación~
 
 
 
-@30 = ~Bala normal -> Bala normal~
-@31 = ~Todas las balas -> Bala normal~
-@32 = ~Todas las balas -> Todas las balas~
+@160 = ~Objeto creado en el inventario del objetivo en el momento del impacto.
+Un 100 por ciento causará que TODOS los proyectiles que golpeen sean recuperables.
 
-@35 = ~Balas~
-@36 = ~Tipo de Balas~
+Inserta el porcentaje de probabilidad de que las hachas arrojadizas sean recuperadas.
+Inserta el porcentaje de probabilidad de que TODOS los proyectiles sean recuperados.
+(los valores están sujetos en 0 y 100)~
 
+@161 = ~Objeto creado en el inventario del objetivo en el momento del impacto.
+Un 100 por ciento causará que TODOS los proyectiles que golpeen sean recuperables.
 
+Inserta el porcentaje de probabilidad de que las flechas sean recuperadas.
+(los valores están sujetos en 0 y 100)~
 
-@100 = ~Leer Leeme~
-@101 = ~Mostrar leeme luego de la instalación~
-@102 = ~No mostrar leeme luego de la instalación~
+@162 = ~Objeto creado en el inventario del objetivo en el momento del impacto.
+Un 100 por ciento causará que TODOS los proyectiles que golpeen sean recuperables.
 
-@150 = ~Poner el porcentaje de probabilidad de que el proyectil sea recuperado~
-@151 = ~(valores sujetos en 0 y 100)~
+Inserta el porcentaje de probabilidad de que los proyectiles sean recuperados.
+(los valores están sujetos en 0 y 100)~
+
+@163 = ~Objeto creado en el inventario del objetivo en el momento del impacto.
+Un 100 por ciento causará que TODOS los proyectiles que golpeen sean recuperables.
+
+Inserta el porcentaje de probabilidad de que los virotes sean recuperados.
+(los valores están sujetos en 0 y 100)~
+
+@164 = ~Objeto creado en el inventario del objetivo en el momento del impacto.
+Un 100 por ciento causará que TODOS los proyectiles que golpeen sean recuperables.
+
+Inserta el porcentaje de probabilidad de que los dardos sean recuperados.
+(los valores están sujetos en 0 y 100)~
+
+@165 = ~Objeto creado en el inventario del objetivo en el momento del impacto.
+Un 100 por ciento causará que TODOS los proyectiles que golpeen sean recuperables.
+
+Inserta el porcentaje de probabilidad de que las dagas arrojadizas sean recuperadas.
+(los valores están sujetos en 0 y 100)~
+
+@166 = ~Objeto creado en el inventario del objetivo en el momento del impacto.
+Un 100 por ciento causará que TODOS los proyectiles que golpeen sean recuperables.
+
+Inserta el porcentaje de probabilidad de que las hachas arrojadizas sean recuperadas.
+(los valores están sujetos en 0 y 100)~

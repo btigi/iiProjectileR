@@ -1,27 +1,87 @@
-@10 = ~Normal arrow -> Normal arrow~
-@11 = ~All arrows -> Normal arrow~
-@12 = ~All arrows -> All arrows~
+@5 = ~Projectile Retrieval Mod~
+@8 = ~Please tell me how you'd like to modify your files.
 
-@15 = ~Arrows~
-@16 = ~Arrowtype~
+1. I want to modify ALL thrown/projectiles at once.
+2. I want to modify each thrown/projectile one at a time.
 
+PLEASE ENTER  1 OR 2  ~
 
+@10 = ~Please choose how you'd like ALL your projectiles retrieved.
 
-@20 = ~Normal bolt -> Normal bolt~
-@21 = ~All bolts -> Normal bolt~
-@22 = ~All bolts -> All bolt~
+1. Plain projectile only -> Plain projectile only
+2. All projectiles       -> Plain projectile only
+3. Each projectile       -> Each projectile
+4. Magical projectiles   -> Reduced Magical/Plain projectiles
 
-@25 = ~Bolts~
-@26 = ~Bolttype~
+PLEASE ENTER  1, 2, 3, OR 4  ~
 
+@15 = ~Arrows
+Choose how you want your retreivable arrows to be created upon impact
+***
+0. Don't install arrows
+1. Plain arrow only -> Plain arrow only
+2. All arrows       -> Plain arrow only
+3. Each arrow       -> Each arrow
+4. Magical arrows   -> Reduced Magical/Plain arrows
 
+PLEASE ENTER  0, 1, 2, 3, OR 4  ~
 
-@30 = ~Normal bullet -> Normal bullet~
-@31 = ~All bullets -> Normal bullet~
-@32 = ~All bullets -> All bullets~
+@20 = ~Bolts
+Choose how you want your retreivable bolts to be created upon impact
+***
+0. Don't install bolts
+1. Plain bolt only -> Plain bolt only
+2. All bolts       -> Plain bolt only
+3. Each bolt       -> Each bolt
+4. Magical bolts   -> Reduced Magical/Plain bolts
 
-@35 = ~Bullet~
-@36 = ~Bullettype~
+PLEASE ENTER  0, 1, 2, 3, OR 4  ~
+
+@30 = ~Bullet
+Choose how you want your retreivable bullets to be created upon impact
+***
+0. Don't install bullets
+1. Plain bullet only -> Plain bullet only
+2. All bullets       -> Plain bullet only
+3. Each bullet       -> Each bullet
+4. Magical bullets   -> Reduced Magical/Plain bullets
+
+PLEASE ENTER  0, 1, 2, 3, OR 4  ~
+
+@40 = ~Dart
+Choose how you want your retreivable darts to be created upon impact
+***
+0. Don't install darts
+1. Plain dart only -> Plain dart only
+2. All darts       -> Plain dart only
+3. Each dart       -> Each dart
+4. Magical darts   -> Reduced Magical/Plain darts
+
+PLEASE ENTER  0, 1, 2, 3, OR 4  ~
+
+@50 = ~throwing dagger
+Choose how you want your retreivable throwing daggers
+to be created upon impact
+***
+0. Don't install throwing daggers
+1. Plain throwing dagger only -> Plain throwing dagger only
+2. All throwing daggers       -> Plain throwing dagger only
+3. Each throwing dagger       -> Each throwing dagger
+4. Magical throwing daggers   -> Reduced Magical/Plain throwing daggers
+
+PLEASE ENTER  0, 1, 2, 3, OR 4  ~
+
+@60 = ~throwing axe
+Choose how you want your retreivable throwing axes
+to be created upon impact
+***
+0. Don't install throwing axes
+1. Plain throwing axe only -> Plain throwing axe only
+2. All throwing axes       -> Plain throwing axe only
+3. Each throwing axe       -> Each throwing axe
+4. Magical throwing axes   -> Reduced Magical/Plain throwing axes
+
+PLEASE ENTER  0, 1, 2, 3, OR 4  ~
 
 
 
@@ -29,5 +89,46 @@
 @101 = ~Show readme after installation~
 @102 = ~Do not show readme after installation~
 
-@150 = ~Enter percentage chance of projectile being retrievable~
-@151 = ~(values clamped at 0 and 100)~
+
+
+@160 = ~Item created in target inventory upon impact with target.
+A 100 percent will cause ALL projectiles making a hit retrievable.
+
+Enter percentage chance of ALL thrown & launched projectiles being retrieved.
+(values are clamped at 0 and 100)~
+
+@161 = ~Item created in target inventory upon impact with target.
+A 100 percent will cause ALL projectiles making a hit retrievable.
+
+Enter percentage chance of arrows being retrieved.
+(values are clamped at 0 and 100)~
+
+@162 = ~Item created in target inventory upon impact with target.
+A 100 percent will cause ALL projectiles making a hit retrievable.
+
+Enter percentage chance of bolts being retrieved.
+(values are clamped at 0 and 100)~
+
+@163 = ~Item created in target inventory upon impact with target.
+A 100 percent will cause ALL projectiles making a hit retrievable.
+
+Enter percentage chance of bullets being retrieved.
+(values are clamped at 0 and 100)~
+
+@164 = ~Item created in target inventory upon impact with target.
+A 100 percent will cause ALL projectiles making a hit retrievable.
+
+Enter percentage chance of darts being retrieved.
+(values are clamped at 0 and 100)~
+
+@165 = ~Item created in target inventory upon impact with target.
+A 100 percent will cause ALL projectiles making a hit retrievable.
+
+Enter percentage chance of throwing daggers being retrieved.
+(values are clamped at 0 and 100)~
+
+@166 = ~Item created in target inventory upon impact with target.
+A 100 percent will cause ALL projectiles making a hit retrievable.
+
+Enter percentage chance of throwing axes being retrieved.
+(values are clamped at 0 and 100)~
