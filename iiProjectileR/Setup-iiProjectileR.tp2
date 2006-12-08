@@ -1,8 +1,8 @@
 // ----------------------------------------------------------------------------
 // Name:    Projectile Retrieval Mod
 // Author:  igi + Andy B.
-// Date:    20/11/2006
-// Version: 5
+// Date:    08/12/2006
+// Version: 6
 // ----------------------------------------------------------------------------
 BACKUP ~iiProjectileR/backup~
 AUTHOR ~igi / Andy B.~
@@ -36,6 +36,11 @@ ACTION_READLN how
 OUTER_WHILE !(IS_AN_INT %how%) || (%how% > 2) || (%how% < 1) BEGIN
  PRINT @8
  ACTION_READLN how
+END
+
+OUTER_SET iegame = 1
+ACTION_IF (FILE_EXISTS_IN_GAME ~bull05.itm~) THEN BEGIN
+OUTER_SET iegame = 2
 END
 
 ACTION_IF (%how% = 1) THEN BEGIN
@@ -414,7 +419,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
        END
        ELSE
        PATCH_IF (%item_type% = 14) BEGIN
-        PATCH_IF (FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
+        PATCH_IF (%iegame% = 2) BEGIN
          PATCH_IF (%thac0% > 3) BEGIN
           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
          END
@@ -422,20 +427,28 @@ ACTION_IF (%how% = 1) THEN BEGIN
          PATCH_IF (%thac0% = 3) BEGIN
           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
          END
-        END
-        ELSE
-        PATCH_IF !(FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
-         PATCH_IF (%thac0% > 2) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+         ELSE
+         PATCH_IF (%thac0% = 2) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
          END
         END
         ELSE
-        PATCH_IF (%thac0% = 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
-        END
-        ELSE
-        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+        PATCH_IF (%iegame% = 1) BEGIN
+         PATCH_IF (%thac0% > 2) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (%thac0% = 2) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+         END
         END
        END
        ELSE
@@ -1042,7 +1055,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
        READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
-       PATCH_IF (FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
+       PATCH_IF (%iegame% = 2) BEGIN
         PATCH_IF (%thac0% > 3) BEGIN
          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
         END
@@ -1050,20 +1063,28 @@ ACTION_IF (%how% = 2) THEN BEGIN
         PATCH_IF (%thac0% = 3) BEGIN
          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
         END
-       END
-       ELSE
-       PATCH_IF !(FILE_EXISTS_IN_GAME ~bull05.itm~) BEGIN
-        PATCH_IF (%thac0% > 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+        ELSE
+        PATCH_IF (%thac0% = 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
         END
        END
        ELSE
-       PATCH_IF (%thac0% = 2) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
-       END
-       ELSE
-       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+       PATCH_IF (%iegame% = 1) BEGIN
+        PATCH_IF (%thac0% > 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 2) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+        END
        END
        SET "delta" = ("%delta%" + 1)
       END

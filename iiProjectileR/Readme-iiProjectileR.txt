@@ -1,4 +1,4 @@
-Projectile Retrieval Mod V5
+Projectile Retrieval Mod V6
 ---------------------------
 
 +) Contents
@@ -73,6 +73,9 @@ they got those items.
 
 +) Section 5. Version History
 =============================
+V6 [08/12/2006]
+ - Fixed bug with bullets not being retrieval when using the 'decrementing magic' option
+
 V5 [20/11/2006]
  - Added support for throwing axes, throwing daggers, and darts
  - Added option to retrieve items at lower magical levels
