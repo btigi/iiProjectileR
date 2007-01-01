@@ -1,4 +1,4 @@
-Projectile Retrieval Mod V6
+Projectile Retrieval Mod V7
 ---------------------------
 
 +) Contents
@@ -73,6 +73,10 @@ they got those items.
 
 +) Section 5. Version History
 =============================
+V7 [01/01/2007]
+ - Corrected inability in some situations to modify items introduced by other mods
+ - Proper installation for Easy TUTU now available
+
 V6 [08/12/2006]
  - Fixed bug with bullets not being retrieval when using the 'decrementing magic' option
 

@@ -1,42 +1,3 @@
-// ----------------------------------------------------------------------------
-// Name:    Projectile Retrieval Mod
-// Author:  igi + Andy B.
-// Date:    JAN/01/2007
-// Version: 7
-// ----------------------------------------------------------------------------
-BACKUP ~iiProjectileR/backup~
-AUTHOR ~igi / Andy B.~
-
-LANGUAGE ~English~ ~English~ ~iiProjectileR/Languages/English/setup.tra~
-LANGUAGE ~Spanish (Translation by Immortality)~  ~Spanish~ ~iiProjectileR/Languages/Spanish/setup.tra~
-
-// ------------------------------------------------------------------------------------------------------------------------
-// Readme stuff
-// Some people like to view the readme
-BEGIN @101
-NO_LOG_RECORD
-DESIGNATED 1000
-SUBCOMPONENT @100
-  AT_INTERACTIVE_EXIT ~VIEW iiProjectileR/Readme-iiProjectileR.txt~
-
-
-// And some people don't like to view the readme
-BEGIN @102
-DESIGNATED 2000
-NO_LOG_RECORD
-SUBCOMPONENT @100
-// Do nothing
-
-
-// ------------------------------------------------------------------------------------------------------------------------
-
-BEGIN @6
-SUBCOMPONENT @5
-INCLUDE ~iiprojectiler/E22.tph~  // Easy TUTU version of mod
-
-BEGIN @7
-SUBCOMPONENT @5
-
 PRINT @8
 ACTION_READLN how
 OUTER_WHILE !(IS_AN_INT %how%) || (%how% > 2) || (%how% < 1) BEGIN
@@ -67,7 +28,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
 
  // Standard projectile type -> standard projectile type
  ACTION_IF (%choice% = 1) THEN BEGIN
-  COPY_EXISTING ~arow01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*arow01.itm$~ ~override~
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
@@ -101,7 +62,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
    END
   BUT_ONLY_IF_IT_CHANGES
 
-  COPY_EXISTING ~bolt01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*bolt01.itm$~ ~override~
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
@@ -135,7 +96,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
    END
   BUT_ONLY_IF_IT_CHANGES
 
-  COPY_EXISTING ~bull01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*bull01.itm$~ ~override~
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
@@ -169,7 +130,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
    END
   BUT_ONLY_IF_IT_CHANGES
 
-  COPY_EXISTING ~dart01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*dart01.itm$~ ~override~
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
@@ -203,7 +164,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
    END
   BUT_ONLY_IF_IT_CHANGES
 
-  COPY_EXISTING ~dagg05.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*dagg05.itm$~ ~override~
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
@@ -237,7 +198,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
    END
   BUT_ONLY_IF_IT_CHANGES
 
-  COPY_EXISTING ~ax1h04.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*ax1h04.itm$~ ~override~
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
@@ -300,27 +261,63 @@ ACTION_IF (%how% = 1) THEN BEGIN
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
        PATCH_IF (%item_type% = 5) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow01~ #8    // resource
+        END
        END
        ELSE
        PATCH_IF (%item_type% = 31) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt01~ #8    // resource
+        END
        END
        ELSE
        PATCH_IF (%item_type% = 14) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull01~ #8    // resource
+        END
        END
        ELSE
        PATCH_IF (%item_type% = 0x18) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dart01~ #8    // resource
+        END
        END
        ELSE
        PATCH_IF (%item_type% = 0x10) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dagg05~ #8    // resource
+        END
        END
        ELSE
        PATCH_IF (%item_type% = 0x19) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_ax1h04~ #8    // resource
+        END
        END
        SET "delta" = ("%delta%" + 1)
       END
@@ -398,85 +395,187 @@ ACTION_IF (%how% = 1) THEN BEGIN
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
        PATCH_IF (%item_type% = 5) BEGIN
         PATCH_IF (%thac0% > 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow11~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow11~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow11~ #8    // resource
+         END
         END
         ELSE
         PATCH_IF (%thac0% = 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow02~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow02~ #8    // resource
+         END
         END
         ELSE
         PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow01~ #8    // resource
+         END
         END
        END
        ELSE
        PATCH_IF (%item_type% = 31) BEGIN
         PATCH_IF (%thac0% > 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt06~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt06~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt06~ #8    // resource
+         END
         END
         ELSE
         PATCH_IF (%thac0% = 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt02~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt02~ #8    // resource
+         END
         END
         ELSE
         PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt01~ #8    // resource
+         END 
         END
        END
        ELSE
        PATCH_IF (%item_type% = 14) BEGIN
         PATCH_IF (%iegame% = 2) BEGIN
          PATCH_IF (%thac0% > 3) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull05~ #8    // resource
+          END
          END
          ELSE
          PATCH_IF (%thac0% = 3) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull03~ #8    // resource
+          END
          END
          ELSE
          PATCH_IF (%thac0% = 2) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull02~ #8    // resource
+          END
          END
          ELSE
          PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull01~ #8    // resource
+          END
          END
         END
         ELSE
         PATCH_IF (%iegame% = 1) BEGIN
          PATCH_IF (%thac0% > 2) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull03~ #8    // resource
+          END
          END
          ELSE
          PATCH_IF (%thac0% = 2) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull02~ #8    // resource
+          END
          END
          ELSE
          PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull01~ #8    // resource
+          END
          END
         END
        END
        ELSE
        PATCH_IF (%item_type% = 0x18) BEGIN
         PATCH_IF (%thac0% > 2) || (%thac0% = 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart02~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dart02~ #8    // resource
+         END
         END
         ELSE
         PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dart01~ #8    // resource
+         END
         END
        END
        ELSE
        PATCH_IF (%item_type% = 0x10) BEGIN
         PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dagg05~ #8    // resource
+         END
         END
        END
        ELSE
        PATCH_IF (%item_type% = 0x19) BEGIN
         PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_ax1h04~ #8    // resource
+         END
         END
        END
        SET "delta" = ("%delta%" + 1)
@@ -510,7 +609,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @161
    ACTION_READLN EffectChance_arrow
   END
-  COPY_EXISTING ~arow01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*arow01.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
@@ -536,7 +635,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "arow01" #8    // resource
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -554,7 +653,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @161
    ACTION_READLN EffectChance_arrow
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
@@ -580,7 +679,13 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "arow01" #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow01~ #8    // resource
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -598,7 +703,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @161
    ACTION_READLN EffectChance_arrow
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
@@ -642,7 +747,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @161
    ACTION_READLN EffectChance_arrow
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
@@ -669,17 +774,35 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
        READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
-       PATCH_IF (%thac0% > 2) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow11~ #8    // resource
-       END
-       ELSE
-       PATCH_IF (%thac0% = 2) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow02~ #8    // resource
-       END
-       ELSE
-       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
-       END
+        PATCH_IF (%thac0% > 2) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow11~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow11~ #8    // resource
+         END
+        END
+        ELSE
+        PATCH_IF (%thac0% = 2) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow02~ #8    // resource
+         END
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~arow01~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_arow01~ #8    // resource
+         END
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -706,7 +829,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @162
    ACTION_READLN EffectChance_bolt
   END
-  COPY_EXISTING ~BOLT01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*BOLT01.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
@@ -732,7 +855,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BOLT01" #8    // resource
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -750,7 +873,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @162
    ACTION_READLN EffectChance_bolt
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
@@ -776,7 +899,13 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BOLT01" #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt01~ #8    // resource
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -794,7 +923,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @162
    ACTION_READLN EffectChance_bolt
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
@@ -838,7 +967,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @162
    ACTION_READLN EffectChance_bolt
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
@@ -865,17 +994,35 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
        READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
-       PATCH_IF (%thac0% > 2) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt06~ #8    // resource
-       END
-       ELSE
-       PATCH_IF (%thac0% = 2) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt02~ #8    // resource
-       END
-       ELSE
-       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
-       END
+        PATCH_IF (%thac0% > 2) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt06~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt06~ #8    // resource
+         END
+        END
+        ELSE
+        PATCH_IF (%thac0% = 2) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt02~ #8    // resource
+         END
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bolt01~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bolt01~ #8    // resource
+         END 
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -902,7 +1049,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @163
    ACTION_READLN EffectChance_bullet
   END
-  COPY_EXISTING ~BULL01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*BULL01.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
@@ -928,7 +1075,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BULL01" #8    // resource
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -946,7 +1093,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @163
    ACTION_READLN EffectChance_bullet
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
@@ -972,7 +1119,13 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "BULL01" #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull01~ #8    // resource
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -990,7 +1143,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @163
    ACTION_READLN EffectChance_bullet
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
@@ -1034,7 +1187,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @163
    ACTION_READLN EffectChance_bullet
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
@@ -1061,37 +1214,79 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
        READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
-       PATCH_IF (%iegame% = 2) BEGIN
-        PATCH_IF (%thac0% > 3) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
+        PATCH_IF (%iegame% = 2) BEGIN
+         PATCH_IF (%thac0% > 3) BEGIN
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull05~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull05~ #8    // resource
+          END
+         END
+         ELSE
+         PATCH_IF (%thac0% = 3) BEGIN
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull03~ #8    // resource
+          END
+         END
+         ELSE
+         PATCH_IF (%thac0% = 2) BEGIN
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull02~ #8    // resource
+          END
+         END
+         ELSE
+         PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull01~ #8    // resource
+          END
+         END
         END
         ELSE
-        PATCH_IF (%thac0% = 3) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+        PATCH_IF (%iegame% = 1) BEGIN
+         PATCH_IF (%thac0% > 2) BEGIN
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull03~ #8    // resource
+          END
+         END
+         ELSE
+         PATCH_IF (%thac0% = 2) BEGIN
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull02~ #8    // resource
+          END
+         END
+         ELSE
+         PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+          PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
+          END
+          ELSE
+          PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+           WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_bull01~ #8    // resource
+          END
+         END
         END
-        ELSE
-        PATCH_IF (%thac0% = 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
-        END
-        ELSE
-        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
-        END
-       END
-       ELSE
-       PATCH_IF (%iegame% = 1) BEGIN
-        PATCH_IF (%thac0% > 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull03~ #8    // resource
-        END
-        ELSE
-        PATCH_IF (%thac0% = 2) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull02~ #8    // resource
-        END
-        ELSE
-        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~bull01~ #8    // resource
-        END
-       END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1118,7 +1313,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @164
    ACTION_READLN EffectChance_dart
   END
-  COPY_EXISTING ~DART01.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*DART01.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
@@ -1144,7 +1339,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "DART01" #8    // resource
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1162,7 +1357,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @164
    ACTION_READLN EffectChance_dart
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
@@ -1188,7 +1383,13 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "DART01" #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dart01~ #8    // resource
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1206,7 +1407,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @164
    ACTION_READLN EffectChance_dart
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
@@ -1250,7 +1451,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @164
    ACTION_READLN EffectChance_dart
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
@@ -1277,13 +1478,25 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
        READ_BYTE   ("%abil_off%" + 0x14 + ("%index%" * 0x38)) "thac0"
-       PATCH_IF (%thac0% > 2) || (%thac0% = 2) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart02~ #8    // resource
-       END
-       ELSE
-       PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
-       END
+        PATCH_IF (%thac0% > 2) || (%thac0% = 2) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart02~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dart02~ #8    // resource
+         END
+        END
+        ELSE
+        PATCH_IF (%thac0% = 1) || (%thac0% < 1) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dart01~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dart01~ #8    // resource
+         END
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1310,7 +1523,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @165
    ACTION_READLN EffectChance_dagger
   END
-  COPY_EXISTING ~DAGG05.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*DAGG05.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
@@ -1336,7 +1549,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "DAGG05" #8    // resource
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8 // resource
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1354,7 +1567,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @165
    ACTION_READLN EffectChance_dagger
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
@@ -1380,7 +1593,13 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dagg05~ #8    // resource
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1398,7 +1617,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @165
    ACTION_READLN EffectChance_dagger
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
@@ -1442,7 +1661,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @165
    ACTION_READLN EffectChance_dagger
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
@@ -1469,9 +1688,15 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
-       END
+        PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~dagg05~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_dagg05~ #8    // resource
+         END
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1498,7 +1723,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @166
    ACTION_READLN EffectChance_axe
   END
-  COPY_EXISTING ~ax1h04.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~.*ax1h04.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
@@ -1524,7 +1749,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges              WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) "ax1h04" #8    // resource
+       WRITE_EVALUATED_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~%SOURCE_RES%~ #8    // resource
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1542,7 +1767,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @166
    ACTION_READLN EffectChance_axe
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
@@ -1568,7 +1793,13 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+        PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+        END
+        ELSE
+        PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+         WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_ax1h04~ #8    // resource
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
@@ -1586,7 +1817,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @166
    ACTION_READLN EffectChance_axe
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
@@ -1630,7 +1861,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
    PRINT @166
    ACTION_READLN EffectChance_axe
   END
-  COPY_EXISTING_REGEXP GLOB ~.*\.itm~ ~override~
+  COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
@@ -1657,9 +1888,15 @@ ACTION_IF (%how% = 2) THEN BEGIN
        WRITE_LONG  ("%fx_off%" + 0x04 + ("%abil_fx_idx%" * 0x30)) 1              // charges
        WRITE_BYTE  ("%fx_off%" + 0x0c + ("%abil_fx_idx%" * 0x30)) 1              // instant/perm
        WRITE_BYTE  ("%fx_off%" + 0x12 + ("%abil_fx_idx%" * 0x30)) %EffectChance% // probability
-       PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
-        WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
-       END
+        PATCH_IF (%thac0% > 0) || (%thac0% = 0) BEGIN
+         PATCH_IF !(~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~ax1h04~ #8    // resource
+         END
+         ELSE
+         PATCH_IF (~%SOURCE_RES%~ STRING_COMPARE_REGEXP ~^_.*~ = 0) BEGIN
+          WRITE_ASCII ("%fx_off%" + 0x14 + ("%abil_fx_idx%" * 0x30)) ~_ax1h04~ #8    // resource
+         END
+        END
        SET "delta" = ("%delta%" + 1)
       END
      END
