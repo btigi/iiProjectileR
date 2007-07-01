@@ -32,6 +32,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
+    READ_BYTE 0x18 ~flags~
+    PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
     PATCH_IF (%stack% > 1) BEGIN
      PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
       READ_LONG   0x64 "abil_off"
@@ -58,6 +60,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
        END
       END
      END
+    END
     END
    END
   BUT_ONLY_IF_IT_CHANGES
@@ -66,6 +69,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
+    READ_BYTE 0x18 ~flags~
+    PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
     PATCH_IF (%stack% > 1) BEGIN
      PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
       READ_LONG   0x64 "abil_off"
@@ -92,6 +97,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
        END
       END
      END
+    END
     END
    END
   BUT_ONLY_IF_IT_CHANGES
@@ -100,6 +106,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
+    READ_BYTE 0x18 ~flags~
+    PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
     PATCH_IF (%stack% > 1) BEGIN
      PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
       READ_LONG   0x64 "abil_off"
@@ -126,6 +134,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
        END
       END
      END
+    END
     END
    END
   BUT_ONLY_IF_IT_CHANGES
@@ -134,6 +143,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
+    READ_BYTE 0x18 ~flags~
+    PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
     PATCH_IF (%stack% > 1) BEGIN
      PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
       READ_LONG   0x64 "abil_off"
@@ -160,6 +171,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
        END
       END
      END
+    END
     END
    END
   BUT_ONLY_IF_IT_CHANGES
@@ -168,6 +180,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
+    READ_BYTE 0x18 ~flags~
+    PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
     PATCH_IF (%stack% > 1) BEGIN
      PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
       READ_LONG   0x64 "abil_off"
@@ -195,6 +209,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
       END
      END
     END
+    END
    END
   BUT_ONLY_IF_IT_CHANGES
 
@@ -202,6 +217,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
    PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
     READ_SHORT 0x1c "item_type"
     READ_SHORT 0x38 ~stack~
+    READ_BYTE 0x18 ~flags~
+    PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
     PATCH_IF (%stack% > 1) BEGIN
      PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
       READ_LONG   0x64 "abil_off"
@@ -228,6 +245,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
        END
       END
      END
+    END
     END
    END
   BUT_ONLY_IF_IT_CHANGES
@@ -239,6 +257,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -324,6 +344,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -334,6 +355,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x10) || (%item_type% = 0x19) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -361,6 +384,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -371,6 +395,8 @@ ACTION_IF (%how% = 1) THEN BEGIN
   PATCH_IF (SOURCE_SIZE > 0x71) THEN BEGIN // protects against invalid files
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 5) || (%item_type% = 31) || (%item_type% = 14) || (%item_type% = 0x18) || (%item_type% = 0x19) || (%item_type% = 0x10) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -583,6 +609,7 @@ ACTION_IF (%how% = 1) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -614,6 +641,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 5) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -641,6 +670,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -658,6 +688,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 5) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -691,6 +723,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -708,6 +741,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 5) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -735,6 +770,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -752,6 +788,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_arrow%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 5) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -808,6 +846,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -834,6 +873,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 31) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -861,6 +902,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -878,6 +920,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 31) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -911,6 +955,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -928,6 +973,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 31) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -955,6 +1002,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -972,6 +1020,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bolt%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 31) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1028,6 +1078,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1054,6 +1105,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 14) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1081,6 +1134,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1098,6 +1152,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 14) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1131,6 +1187,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1148,6 +1205,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 14) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1175,6 +1234,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1192,6 +1252,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_bullet%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 14) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1292,6 +1354,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1318,6 +1381,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x18) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1345,6 +1410,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1362,6 +1428,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x18) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1395,6 +1463,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1412,6 +1481,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x18) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1439,6 +1510,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1456,6 +1528,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dart%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x18) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1502,6 +1576,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1528,6 +1603,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x10) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1555,6 +1632,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1572,6 +1650,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x10) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1605,6 +1685,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1622,6 +1703,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x10) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1649,6 +1732,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1666,6 +1750,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_dagger%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x10) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1702,6 +1788,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1728,6 +1815,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x19) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1755,6 +1844,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1772,6 +1862,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x19) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1805,6 +1897,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1822,6 +1915,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x19) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1849,6 +1944,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
      END
     END
    END
+   END
   END
   BUT_ONLY_IF_IT_CHANGES
  END
@@ -1866,6 +1962,8 @@ ACTION_IF (%how% = 2) THEN BEGIN
    SET ~EffectChance~ = %EffectChance_axe%
    READ_SHORT 0x1c "item_type"
    READ_SHORT 0x38 ~stack~
+   READ_BYTE 0x18 ~flags~
+   PATCH_IF ((%flags% BAND "0b00000100") = "0b00000100") BEGIN // droppable
    PATCH_IF (%stack% > 1) BEGIN
     PATCH_IF (%item_type% = 0x19) BEGIN
      READ_LONG   0x64 "abil_off"
@@ -1901,6 +1999,7 @@ ACTION_IF (%how% = 2) THEN BEGIN
       END
      END
     END
+   END
    END
   END
   BUT_ONLY_IF_IT_CHANGES

@@ -1,4 +1,4 @@
-Projectile Retrieval Mod V7
+Projectile Retrieval Mod V8
 ---------------------------
 
 +) Contents
@@ -73,6 +73,10 @@ they got those items.
 
 +) Section 5. Version History
 =============================
+V8 [01/07/2007]
+ - Prevent unmovable items being retrievable (note: such items are not retrievable, rather than being made movable)
+ - Updated to WeiDU 199
+
 V7 [01/01/2007]
  - Corrected inability in some situations to modify items introduced by other mods
  - Proper installation for Easy TUTU now available
