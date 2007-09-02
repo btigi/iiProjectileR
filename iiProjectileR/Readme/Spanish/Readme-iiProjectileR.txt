@@ -1,5 +1,5 @@
-Projectile Retrieval Mod V9
----------------------------
+Projectile Retrieval Mod V9.1
+-----------------------------
 
 +) Contenido
 ===========
@@ -72,6 +72,9 @@ Gracias especiales a Andy B por recodificar el mod y agregar más opciones además
 
 +) Sección 5. Historial
 =============================
+V9.1 [21/09/2021]
+  - Maintenance release RE: mod packaging
+
 V9 [02/09/2007]
   - Añadida la traducción al polaco
   - Actualizado el código de mostrar el Léeme

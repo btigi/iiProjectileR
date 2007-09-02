@@ -1,5 +1,5 @@
-Projectile Retrieval Mod V9
----------------------------
+Projectile Retrieval Mod V9.1
+-----------------------------
 
 +) Contents
 ===========
@@ -73,6 +73,9 @@ they got those items.
 
 +) Section 5. Version History
 =============================
+V9.1 [21/09/2021]
+  - Maintenance release RE: mod packaging
+
 V9 [02/09/2007]
   - Added Polish translation
   - Updated view readme code
