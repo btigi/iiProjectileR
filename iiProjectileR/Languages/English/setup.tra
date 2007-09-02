@@ -87,9 +87,10 @@ PLEASE ENTER  0, 1, 2, 3, OR 4  ~
 
 
 
-@100 = ~View Readme~
-@101 = ~Show readme after installation~
-@102 = ~Do not show readme after installation~
+@1000 = ~View Readme~
+@1005 = ~View readme file now~
+@1010 = ~View readme file after installation~
+@1020 = ~Do not view readme file~
 
 
 

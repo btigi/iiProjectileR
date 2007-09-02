@@ -1,0 +1,126 @@
+@5   = ~Odzyskiwanie pociskow~ 
+@6   = ~Easy TuTu~
+@7   = ~Inne gry na silniku Infinity~ 
+@8   = ~Zdecyduj o tym, w jaki sposob mam modyfikowac pliki:
+1. Chce decydowac o modyfikacji WSZYSTKICH pociskow i broni miotanych na raz. 
+2. Chce decydowac o modyfikacji kazdego typu pociskow i broni miotanych.
+
+Wpisz 1 lub 2 i potwierdz wybor przyciskiem ENTER.~
+@10  = ~Wszystkie pociski i bronie miotane
+Wybierz to, w jaki sposob maja byc odzyskiwane WSZYSTKIE pociski i bronie miotane.
+
+* * * *
+
+1. Mozna odzyskiwac tylko zwykle (nieumagicznione) pociski
+2. Mozna odzyskiwac wszystkie pociski, lecz traca cale umagicznienie
+3. Mozna odzyskiwac wszystkie pociski
+4. Mozna odzyskiwac wszystkie pociski, lecz stopniowo traca umagicznienie
+
+Wpisz 1, 2, 3 lub 4 i potwierdz wybor przyciskiem ENTER.~ 
+@15  = ~Strzaly
+Wybierz to, w jaki sposob maja byc odzyskiwane strzaly.
+
+* * * *
+
+1. Mozna odzyskiwac tylko zwykle (nieumagicznione) strzaly
+2. Mozna odzyskiwac wszystkie strzaly, lecz traca cale umagicznienie
+3. Mozna odzyskiwac wszystkie strzaly
+4. Mozna odzyskiwac wszystkie strzaly, lecz stopniowo traca umagicznienie
+
+Wpisz 1, 2, 3 lub 4 i potwierdz wybor przyciskiem ENTER.~
+@20  = ~Belty
+Wybierz to, w jaki sposob maja byc odzyskiwane belty.
+
+* * * *
+
+1. Mozna odzyskiwac tylko zwykle (nieumagicznione) belty
+2. Mozna odzyskiwac wszystkie belty, lecz traca cale umagicznienie
+3. Mozna odzyskiwac wszystkie belty
+4. Mozna odzyskiwac wszystkie belty, lecz stopniowo traca umagicznienie
+
+Wpisz 1, 2, 3 lub 4 i potwierdz wybor przyciskiem ENTER.~
+@30  = ~Pociski
+Wybierz to, w jaki sposob maja byc odzyskiwane pociski.
+
+* * * *
+
+1. Mozna odzyskiwac tylko zwykle (nieumagicznione) pociski
+2. Mozna odzyskiwac wszystkie pociski, lecz traca cale umagicznienie
+3. Mozna odzyskiwac wszystkie pociski
+4. Mozna odzyskiwac wszystkie pociski, lecz stopniowo traca umagicznienie
+
+Wpisz 1, 2, 3 lub 4 i potwierdz wybor przyciskiem ENTER.~ 
+@40  = ~Strzalki
+Wybierz to, w jaki sposob maja byc odzyskiwane strzalki.
+
+* * * *
+
+1. Mozna odzyskiwac tylko zwykle (nieumagicznione) strzalki
+2. Mozna odzyskiwac wszystkie strzalki, lecz traca cale umagicznienie
+3. Mozna odzyskiwac wszystkie strzalki
+4. Mozna odzyskiwac wszystkie strzalki, lecz stopniowo traca umagicznienie
+
+Wpisz 1, 2, 3 lub 4 i potwierdz wybor przyciskiem ENTER.~
+@50  = ~Sztylety do rzucania
+Wybierz to, w jaki sposob maja byc odzyskiwane sztylety do rzucania.
+
+* * * *
+
+1. Mozna odzyskiwac tylko zwykle (nieumagicznione) sztylety
+2. Mozna odzyskiwac wszystkie sztylety, lecz traca cale umagicznienie
+3. Mozna odzyskiwac wszystkie sztylety
+4. Mozna odzyskiwac wszystkie sztylety, lecz stopniowo traca umagicznienie
+
+Wpisz 1, 2, 3 lub 4 i potwierdz wybor przyciskiem ENTER.~ 
+@60  = ~Toporki do rzucania
+Wybierz to, w jaki sposob maja byc odzyskiwane toporki do rzucania.
+
+* * * *
+
+1. Mozna odzyskiwac tylko zwykle (nieumagicznione) toporki
+2. Mozna odzyskiwac wszystkie toporki, lecz traca cale umagicznienie
+3. Mozna odzyskiwac wszystkie toporki
+4. Mozna odzyskiwac wszystkie toporki, lecz stopniowo traca umagicznienie
+
+Wpisz 1, 2, 3 lub 4 i potwierdz wybor przyciskiem ENTER.~
+
+@1000 = ~Pokazywanie dokumentacji~ 
+@1005 = ~Pokazuja dokumentacji teraz~ 
+@1010 = ~Pokaz dokumentacje po instalacji~
+@1020 = ~Nie pokazuj~ 
+
+@160 = ~Tworzenie przedmiotow w ekwipunku ofiary po udanym trafieniu.
+100 procent sprawi, ze kazdy pocisk bedzie mozna odzyskac z ciala ofiary.
+
+Wpisz wartosc procentowa szansy na odzyskanie KAZDEGO pocisku oraz broni miotanej.
+(Wartosc brana pod uwage to od 0 do 100)~ 
+@161 = ~Tworzenie przedmiotow w ekwipunku ofiary po udanym trafieniu.
+100 procent sprawi, ze kazdy pocisk bedzie mozna odzyskac z ciala ofiary.
+
+Wpisz wartosc procentowa szansy na odzyskanie strzaly.
+(Wartosc brana pod uwage to od 0 do 100)~
+@162 = ~Tworzenie przedmiotow w ekwipunku ofiary po udanym trafieniu.
+100 procent sprawi, ze kazdy pocisk bedzie mozna odzyskac z ciala ofiary.
+
+Wpisz wartosc procentowa szansy na odzyskanie beltu.
+(Wartosc brana pod uwage to od 0 do 100)~
+@163 = ~Tworzenie przedmiotow w ekwipunku ofiary po udanym trafieniu.
+100 procent sprawi, ze kazdy pocisk bedzie mozna odzyskac z ciala ofiary.
+
+Wpisz wartosc procentowa szansy na odzyskanie pocisku.
+(Wartosc brana pod uwage to od 0 do 100)~
+@164 = ~Tworzenie przedmiotow w ekwipunku ofiary po udanym trafieniu.
+100 procent sprawi, ze kazdy pocisk bedzie mozna odzyskac z ciala ofiary.
+
+Wpisz wartosc procentowa szansy na odzyskanie strzalki.
+(Wartosc brana pod uwage to od 0 do 100)~ 
+@165 = ~Tworzenie przedmiotow w ekwipunku ofiary po udanym trafieniu.
+100 procent sprawi, ze kazdy pocisk bedzie mozna odzyskac z ciala ofiary.
+
+Wpisz wartosc procentowa szansy na odzyskanie sztyletow do rzucania.
+(Wartosc brana pod uwage to od 0 do 100)~
+@166 = ~Tworzenie przedmiotow w ekwipunku ofiary po udanym trafieniu.
+100 procent sprawi, ze kazdy pocisk bedzie mozna odzyskac z ciala ofiary.
+
+Wpisz wartosc procentowa szansy na odzyskanie toporkow do rzucania.
+(Wartosc brana pod uwage to od 0 do 100)~ 

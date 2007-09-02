@@ -2,30 +2,41 @@
 // Name:    Projectile Retrieval Mod
 // Author:  igi + Andy B.
 // Date:    JAN/01/2007
-// Version: 7
+// Version: 9
 // ----------------------------------------------------------------------------
 BACKUP ~iiProjectileR/backup~
 AUTHOR ~igi / Andy B.~
 
 LANGUAGE ~English~ ~English~ ~iiProjectileR/Languages/English/setup.tra~
 LANGUAGE ~Spanish (Translation by Immortality)~  ~Spanish~ ~iiProjectileR/Languages/Spanish/setup.tra~
+LANGUAGE ~Polish (Translation by yarpen)~  ~Polish~ ~iiProjectileR/Languages/Polish/setup.tra~
 
-// ------------------------------------------------------------------------------------------------------------------------
+
+//!----------------------------------------------------------------------------
 // Readme stuff
-// Some people like to view the readme
-BEGIN @101
+//!----------------------------------------------------------------------------
+// Some people like to view the readme at the start
+BEGIN @1005
+NO_LOG_RECORD
+DESIGNATED 900
+SUBCOMPONENT @1000
+  AT_INTERACTIVE_NOW ~VIEW iiProjectileR/Readme/%LANGUAGE%/Readme-iiProjectileR.txt~
+
+
+// Some people like to view the readme at the end
+BEGIN @1010
 NO_LOG_RECORD
 DESIGNATED 1000
-SUBCOMPONENT @100
-  AT_INTERACTIVE_EXIT ~VIEW iiProjectileR/Readme-iiProjectileR.txt~
+SUBCOMPONENT @1000
+  AT_INTERACTIVE_EXIT ~VIEW iiProjectileR/Readme/%LANGUAGE%/Readme-iiProjectileR.txt~
 
 
-// And some people don't like to view the readme
-BEGIN @102
+// And some people don't like to view the readme at all
+BEGIN @1020
 DESIGNATED 2000
 NO_LOG_RECORD
-SUBCOMPONENT @100
-// Do nothing
+SUBCOMPONENT @1000
+  // Do nothing
 
 
 // ------------------------------------------------------------------------------------------------------------------------

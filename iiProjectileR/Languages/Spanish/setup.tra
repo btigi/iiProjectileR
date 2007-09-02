@@ -85,9 +85,10 @@ POR FAVOR ELIGE  0, 1, 2, 3, O 4  ~
 
 
 
-@100 = ~Ver Léeme~
-@101 = ~Mostrar Léeme luego de la instalación~
-@102 = ~No mostrar léeme luego de la instalación~
+@1000 = ~Ver leeme~
+@1005 = ~Mostrar léeme ahora~
+@1010 = ~Mostrar léeme luego de la instalación~
+@1020 = ~No mostrar el léeme~
 
 
 
