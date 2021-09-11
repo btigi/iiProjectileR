@@ -1,5 +1,5 @@
-Odzyskiwanie pocisków V9
----------------------------
+Odzyskiwanie pocisków V9.1
+--------------------------
 
 +) Zawartoœæ
 ===========
@@ -62,6 +62,9 @@ W ekwipunku ka¿dego cz³onka dru¿yny który zostanie trafiony pociskiem, mo¿e poja
 
 +) Czêœæ 5. Historia wersji (ENG)
 =============================
+V9.1 [21/09/2021]
+  - Maintenance release RE: mod packaging
+
 V9 [02/09/2007]
   - Added Polish translation
   - Updated view readme code
