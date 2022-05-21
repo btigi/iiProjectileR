@@ -1,3 +1,7 @@
+![Latest Release](https://img.shields.io/github/v/release/btigi/iiProjectileR?color=blue)
+
+---
+
 # Projectile Retrieval
 
  Projectile Retrieval  has a simple aim - to allow the player to retrieve used projectiles. Primarily intended for arrows (though bolts and bullets are supported), the fact that projectile can be retrieved from the environment after use increases the realism of the game (and besides, it's cool to pick up your spent arrows from the bodies of your fallen enemies).
