@@ -1,66 +1,66 @@
-Odzyskiwanie pocisków V9.1
+Odzyskiwanie pociskÃ³w V9.1
 --------------------------
 
-+) Zawartoœæ
++) ZawartoÅ›Ä‡
 ===========
 1.    O modzie
 2.    (De)Instalacja
 3.    Znane problemy
-4.    Podziêkowania
+4.    PodziÄ™kowania
 5.    Historia wersji
 6.    Kontakt
 
 
-+) Czêœæ 1. O modzie
++) CzÄ™Å›Ä‡ 1. O modzie
 ===================
-  Mod Odzyskiwanie pocisków ma prosty cel - pozwoliæ graczom na odzyskiwanie wystrzelonych pocisków z cia³ przeciwników. Podstawowym zamierzeniem by³o tylko przywracanie strza³ (lecz obecnie mo¿na te¿ odzyskiwaæ be³ty i pociski). Fakt i¿ mo¿na odzyskiwaæ wystrzelone pociski z cia³ przeciwników zdecydowanie zwiêksza realizm gry.
+  Mod Odzyskiwanie pociskÃ³w ma prosty cel - pozwoliÄ‡ graczom na odzyskiwanie wystrzelonych pociskÃ³w z ciaÅ‚ przeciwnikÃ³w. Podstawowym zamierzeniem byÅ‚o tylko przywracanie strzaÅ‚ (lecz obecnie moÅ¼na teÅ¼ odzyskiwaÄ‡ beÅ‚ty i pociski). Fakt iÅ¼ moÅ¼na odzyskiwaÄ‡ wystrzelone pociski z ciaÅ‚ przeciwnikÃ³w zdecydowanie zwiÄ™ksza realizm gry.
 
-Gracz mo¿e zainstalowaæ opcje odzyskiwania pocisków w dowolnej kombinacji. Przedmioty traktowane jako pociski to: 
- - Strza³y
- - Be³ty
+Gracz moÅ¼e zainstalowaÄ‡ opcje odzyskiwania pociskÃ³w w dowolnej kombinacji. Przedmioty traktowane jako pociski to: 
+ - StrzaÅ‚y
+ - BeÅ‚ty
  - Pociski
- - Strza³ki
+ - StrzaÅ‚ki
  - Rzucane sztylety
  - Rzucane toporki
 
-Gracz mo¿e dla ka¿dego typu broni okreœliæ szansê na mo¿liwoœæ odzyskania (wartoœæ zawarta w granicach od 0 do 100).
+Gracz moÅ¼e dla kaÅ¼dego typu broni okreÅ›liÄ‡ szansÄ™ na moÅ¼liwoÅ›Ä‡ odzyskania (wartoÅ›Ä‡ zawarta w granicach od 0 do 100).
 
-UWAGA: Mo¿na odzyskaæ pocisk tylko po UDANYM trafieniu. Jak nie trafisz, przedmiot zostaje utracony na zawsze.
+UWAGA: MoÅ¼na odzyskaÄ‡ pocisk tylko po UDANYM trafieniu. Jak nie trafisz, przedmiot zostaje utracony na zawsze.
 
-Podczas instalacji mo¿na zdecydowaæ w jaki sposób maj¹ byæ przywracane poszczególne przedmioty (ze wzglêdu na umagicznienie). Dostêpne opcje:
-  1. Tylko niemagiczne przedmioty mog¹ zostaæ przywrócone
-  2. Wszystkie przedmioty mog¹ zostaæ przywrócone jako niemagiczne przedmioty
-  3. Wszystkie przedmioty mog¹ zostaæ przywrócone w oryginalnej formie
-  4. Magiczne przedmioty mog¹ zostaæ przywrócone z coraz ni¿szym umagicznieniem, by skoñczyæ jako przedmioty niemagiczne.
+Podczas instalacji moÅ¼na zdecydowaÄ‡ w jaki sposÃ³b majÄ… byÄ‡ przywracane poszczegÃ³lne przedmioty (ze wzglÄ™du na umagicznienie). DostÄ™pne opcje:
+  1. Tylko niemagiczne przedmioty mogÄ… zostaÄ‡ przywrÃ³cone
+  2. Wszystkie przedmioty mogÄ… zostaÄ‡ przywrÃ³cone jako niemagiczne przedmioty
+  3. Wszystkie przedmioty mogÄ… zostaÄ‡ przywrÃ³cone w oryginalnej formie
+  4. Magiczne przedmioty mogÄ… zostaÄ‡ przywrÃ³cone z coraz niÅ¼szym umagicznieniem, by skoÅ„czyÄ‡ jako przedmioty niemagiczne.
 
-UWAGA: Gracz powinien odinstalowaæ poprzednie wersje Odzyskiwania pocisków przed instalacj¹ tej wersji - by unikn¹æ mo¿liwych konfliktów.
+UWAGA: Gracz powinien odinstalowaÄ‡ poprzednie wersje Odzyskiwania pociskÃ³w przed instalacjÄ… tej wersji - by uniknÄ…Ä‡ moÅ¼liwych konfliktÃ³w.
 
 
 +) Section 2. (un)Installation
 ==============================
-Mod Odzyskiwanie pocisków jest dystrybutowany przy u¿yciu WeiDU. By go zainstalowaæ, wypakuj archiwum iiProjectileR(xx).zip do g³ównego katalogu BG2. Potem, uruchom plik "Setup-iiProjectileR.exe" i wybierz te komponenty które chcesz zainstalowaæ.
+Mod Odzyskiwanie pociskÃ³w jest dystrybutowany przy uÅ¼yciu WeiDU. By go zainstalowaÄ‡, wypakuj archiwum iiProjectileR(xx).zip do gÅ‚Ã³wnego katalogu BG2. Potem, uruchom plik "Setup-iiProjectileR.exe" i wybierz te komponenty ktÃ³re chcesz zainstalowaÄ‡.
 
-By odinstalowaæ, ponownie uruchom plik "Setup-iiProjectileR.exe" i w menu wybierz opcjê [U]ninstall.
+By odinstalowaÄ‡, ponownie uruchom plik "Setup-iiProjectileR.exe" i w menu wybierz opcjÄ™ [U]ninstall.
 
-+) Czêœæ 3. Znane problemy
++) CzÄ™Å›Ä‡ 3. Znane problemy
 ==========================
-W ekwipunku ka¿dego cz³onka dru¿yny który zostanie trafiony pociskiem, mo¿e pojawiæ siê pocisk. To jak to sobie wyt³umaczysz, pozostawiam ju¿ twojej wyobraŸni.
+W ekwipunku kaÅ¼dego czÅ‚onka druÅ¼yny ktÃ³ry zostanie trafiony pociskiem, moÅ¼e pojawiÄ‡ siÄ™ pocisk. To jak to sobie wytÅ‚umaczysz, pozostawiam juÅ¼ twojej wyobraÅºni.
 
 
-+) Czêœæ 4. Podziêkowania
++) CzÄ™Å›Ä‡ 4. PodziÄ™kowania
 =======================
   + Avenger        - DLTCEP
   + G3             - kod patchowania WeiDU
   + Wes Weimer     - WeiDU
   + Dmitry Jemerov - Infinity Explorer
   + IESDP          - http://iesdp.gibberlings3.net/
-  + Immortality    - hiszpañskie t³umaczenie
-  + Yarpen         - polskie t³umaczenie
+  + Immortality    - hiszpaÅ„skie tÅ‚umaczenie
+  + Yarpen         - polskie tÅ‚umaczenie
   
-  Specjalne podziêkowania dla Andy'ego B za sprawdzenie moda, dodanie kilku dodatków oraz poprawek.
+  Specjalne podziÄ™kowania dla Andy'ego B za sprawdzenie moda, dodanie kilku dodatkÃ³w oraz poprawek.
 
 
-+) Czêœæ 5. Historia wersji (ENG)
++) CzÄ™Å›Ä‡ 5. Historia wersji (ENG)
 =============================
 V9.1 [21/09/2021]
   - Maintenance release RE: mod packaging
@@ -104,7 +104,4 @@ V1 [24/09/2006]
 
 +) Section 6. Contact Details
 =============================
-Feedback, comments, queries, questions and suggestion should be sent to bt_igi / igi (Marc Wrench) and/or Andy B
-E-mail: igi@mcwrench.com and/or plainolandyb@yahoo.com
-WWW   : http://www.teambg.eu
-WWW   : http://www.mcwrench.com
+Informacje zwrotne, komentarze, zapytania, pytania i sugestie naleÅ¼y przesyÅ‚aÄ‡ na adres igi / bt_igi / iggti
