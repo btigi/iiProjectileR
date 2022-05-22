@@ -4,61 +4,61 @@ Projectile Retrieval Mod V9.1
 +) Contenido
 ===========
 1.    Acerca
-2.    InstalaciÛn-DesinstalaciÛn
+2.    Instalaci√≥n-Desinstalaci√≥n
 3.    Problemas conocidos
 4.    Gracias
 5.    Historial
 6.    Contacto
 
 
-+) SecciÛn 1. Acerca
++) Secci√≥n 1. Acerca
 ===================
-El mod Projectile Retrieval tiene un objetivo simple: permitir a los jugadores recuperar proyectiles. Apunta primariamente a las flechas (aunque soporta balas y virotes), el que los proyectiles puedan ser recuperados luego de su uso incrementa el realismo del juego (y adem·s es divertido recuperar las flechas de los cuerpos de tus enemigos caÌdos).
+El mod Projectile Retrieval tiene un objetivo simple: permitir a los jugadores recuperar proyectiles. Apunta primariamente a las flechas (aunque soporta balas y virotes), el que los proyectiles puedan ser recuperados luego de su uso incrementa el realismo del juego (y adem√°s es divertido recuperar las flechas de los cuerpos de tus enemigos ca√≠dos).
 
-Los jugadores pueden instalar varias opciones de combinaciones de recuperaciÛn de proyectiles. Los objetos que cuentan como proyectiles en este mod son:
+Los jugadores pueden instalar varias opciones de combinaciones de recuperaci√≥n de proyectiles. Los objetos que cuentan como proyectiles en este mod son:
   Flechas, virotes, balas, dardos, dagas y hachas arrojadizas.
-Los jugadores eligen el porcentaje de posibilidad de recuperaciÛn de los proyectiles: (valores sujetos en 0 y 100). NOTA: SÛlo los proyectiles que golpean satisfactoriamente pueden ser recuperados. Los objetos que fallan el objetivo se pierden.
-Los jugadores pueden elegir quÈ categorÌa de objeto es recuperable seg˙n las siguientes opciones:
+Los jugadores eligen el porcentaje de posibilidad de recuperaci√≥n de los proyectiles: (valores sujetos en 0 y 100). NOTA: S√≥lo los proyectiles que golpean satisfactoriamente pueden ser recuperados. Los objetos que fallan el objetivo se pierden.
+Los jugadores pueden elegir qu√© categor√≠a de objeto es recuperable seg√∫n las siguientes opciones:
 
 
 Objetos normales
-SÛlo los objetos normales son recuperables, por ejemplo las flechas sin encantamientos, mientras que una Flecha de DetonaciÛn no ser· recuperable.
+S√≥lo los objetos normales son recuperables, por ejemplo las flechas sin encantamientos, mientras que una Flecha de Detonaci√≥n no ser√° recuperable.
 
 Todos los objetos como normales
-Todos los objetos ser·n recuperados como normales, por ejemplo, una flecha normal ser· recuperada como una flecha normal, y una flecha de detonaciÛn ser· recuperada tambiÈn como una normal.
+Todos los objetos ser√°n recuperados como normales, por ejemplo, una flecha normal ser√° recuperada como una flecha normal, y una flecha de detonaci√≥n ser√° recuperada tambi√©n como una normal.
 
 Todos los objetos igual
-Todos los objetos ser·n recuperados como son, por ejemplo, una flecha normal seguir· siendo normal y una flecha de detonaciÛn seguir· siendo una flecha de detonaciÛn.
+Todos los objetos ser√°n recuperados como son, por ejemplo, una flecha normal seguir√° siendo normal y una flecha de detonaci√≥n seguir√° siendo una flecha de detonaci√≥n.
 
 Encantamiento degradante
-Basado en el THAC0 del objeto m·gico, este ser· recuperado como objeto del siguiente menor nivel m·gico, o como objeto normal.
-    Una flecha de perforaciÛn ser· recuperada como flecha +2
-    Una flecha +2 ser· recuperada como flecha +1
-    Una flecha +1 ser· recuperada como flecha normal
-    Una flecha normal ser· recuperada como flecha normal
+Basado en el THAC0 del objeto m√°gico, este ser√° recuperado como objeto del siguiente menor nivel m√°gico, o como objeto normal.
+    Una flecha de perforaci√≥n ser√° recuperada como flecha +2
+    Una flecha +2 ser√° recuperada como flecha +1
+    Una flecha +1 ser√° recuperada como flecha normal
+    Una flecha normal ser√° recuperada como flecha normal
 
 Opciones secundarias:
-  1. Objetos no m·gicos recuperados como objetos no m·gicos
-  2. Objetos m·gicos y no m·gicos recuperados como objetos no m·gicos
+  1. Objetos no m√°gicos recuperados como objetos no m√°gicos
+  2. Objetos m√°gicos y no m√°gicos recuperados como objetos no m√°gicos
   3. Objetos recuperados como ellos mismos
-  4. Objetos m·gicos recuperados con menor nivel y ˙ltimamente como normales.
+  4. Objetos m√°gicos recuperados con menor nivel y √∫ltimamente como normales.
 
 NOTA: Los jugadores deben desinstalar las versiones previas de este mod antes de instalarlo para evitar posibles conflictos.
 
 
-+) SecciÛn 2. InstalaciÛn-DesinstalaciÛn
++) Secci√≥n 2. Instalaci√≥n-Desinstalaci√≥n
 ==============================
-El mod Projectile Retrieval se distribuye utilizando WeiDU. PAra instalar, descomprime el archivo iiProjectileR(xx).zip  (donde xx es el n˙mero de la versiÛn), en el directorio del BG2. Ejecuta "Setup-iiProjectileR.exe" y sigue las instrucciones en pantalla.
+El mod Projectile Retrieval se distribuye utilizando WeiDU. PAra instalar, descomprime el archivo iiProjectileR(xx).zip  (donde xx es el n√∫mero de la versi√≥n), en el directorio del BG2. Ejecuta "Setup-iiProjectileR.exe" y sigue las instrucciones en pantalla.
 
 Para desinstalar ejecuta "Setup-iiProjectileR.exe" Y sigue las instrucciones seleccionando "Uninstall".
 
 
-+) SecciÛn 3. Problemas conocidos
++) Secci√≥n 3. Problemas conocidos
 ==========================
-Personajes del grupo golpeados por proyectiles enemigos obtendr·n los proyectiles en su inventario. Os dejo la opciÛn para que os inventÈis el cÛmo y de dÛnde los han sacado.
+Personajes del grupo golpeados por proyectiles enemigos obtendr√°n los proyectiles en su inventario. Os dejo la opci√≥n para que os invent√©is el c√≥mo y de d√≥nde los han sacado.
 
 
-+) SecciÛn 4. Gracias
++) Secci√≥n 4. Gracias
 =======================
   + Avenger        - DLTCEP
   + G3             - WeiDU patching code
@@ -67,17 +67,17 @@ Personajes del grupo golpeados por proyectiles enemigos obtendr·n los proyectile
   + IESDP          - http://iesdp.gibberlings3.net/
   + Immortaity     - http://www.clandlan.net
  
-Gracias especiales a Andy B por recodificar el mod y agregar m·s opciones adem·s de arreglos.
+Gracias especiales a Andy B por recodificar el mod y agregar m√°s opciones adem√°s de arreglos.
 
 
-+) SecciÛn 5. Historial
++) Secci√≥n 5. Historial
 =============================
 V9.1 [21/09/2021]
   - Maintenance release RE: mod packaging
 
 V9 [02/09/2007]
-  - AÒadida la traducciÛn al polaco
-  - Actualizado el cÛdigo de mostrar el LÈeme
+  - A√±adida la traducci√≥n al polaco
+  - Actualizado el c√≥digo de mostrar el L√©eme
   - Actualizado a WeiDU 200
 
 V8 [01/07/2007]
@@ -86,35 +86,32 @@ V8 [01/07/2007]
 
 V7 [01/01/2007]
  - Corregida la posibilidad de (en algunas situaciones) modificar objetos provenientes de otros mods
- - InstalaciÛn funcional para Easy TUTU disponible
+ - Instalaci√≥n funcional para Easy TUTU disponible
 
 V6 [08/12/2006]
- - Solucionado el bug de las balas que no se pueden recuperar si se usa la opciÛn de recuperar a menor nivel
+ - Solucionado el bug de las balas que no se pueden recuperar si se usa la opci√≥n de recuperar a menor nivel
 
 V5 [20/11/2006]
  - Agregado soporte para hachas y dagas arrojadizas y dardos
- - Agregada la opciÛn de recuperar proyectiles a menor nivel
- - Agregada la opciÛn de instalar todos los objetos con las mismas opciones al mismo tiempo
- - Se reescribe el setup.tra para ser menos crÌptico
- - Se borran grupos de subcomponentes y se reemplazan con action_readln y listas de opciones numÈricas
- - ActualizaciÛn de traducciÛn al castellano (Gracias Immortality!)
+ - Agregada la opci√≥n de recuperar proyectiles a menor nivel
+ - Agregada la opci√≥n de instalar todos los objetos con las mismas opciones al mismo tiempo
+ - Se reescribe el setup.tra para ser menos cr√≠ptico
+ - Se borran grupos de subcomponentes y se reemplazan con action_readln y listas de opciones num√©ricas
+ - Actualizaci√≥n de traducci√≥n al castellano (Gracias Immortality!)
 
 V4 [n/a]
-  - VersiÛn interna
+  - Versi√≥n interna
 
 V3 [13/10/2006]
-  - Agregada traducciÛn al castellano (Gracias Immortality!)
+  - Agregada traducci√≥n al castellano (Gracias Immortality!)
 
 V2 [30/09/2006]
-  - Agregada la opciÛn de especificar la probabilidad de recuperaciÛn de proyectiles
+  - Agregada la opci√≥n de especificar la probabilidad de recuperaci√≥n de proyectiles
 
 V1 [24/09/2006]
-  - VersiÛn inicial
+  - Versi√≥n inicial
 
 
-+) SecciÛn 6. Contacto
++) Secci√≥n 6. Contacto
 =============================
-Opiniones, comentarios, preguntas, y sugerencias deben ser enviadas a bt_igi / igi (Marc Wrench) y/o Andy B
-E-mail: igi@mcwrench.com y/o plainolandyb@yahoo.com
-WWW   : http://www.teambg.eu
-WWW   : http://www.mcwrench.com
+Los comentarios, comentarios, consultas, preguntas y sugerencias deben enviarse a igi / bt_igi / iggti
